@@ -11,7 +11,12 @@
 
 namespace craftquest;
 
+use craft\events\RegisterComponentTypesEvent;
 use Yii\base\Module;
+use Yii\base\Event;
+use craft\services\Dashboard;
+use craftquest\widgets\DeprecWidget;
+use Craft;
 
 class Widgetopia extends Module
 {
@@ -22,6 +27,24 @@ class Widgetopia extends Module
     public function init()
     {
         parent::init();
+        Craft::setAlias('@widgetopia', __DIR__);
+        $this->_registerWidgets();
 
     }
+
+
+    private function _registerWidgets()
+    {
+        Event::on(
+            Dashboard::class,
+            Dashboard::EVENT_REGISTER_WIDGET_TYPES,
+            function(RegisterComponentTypesEvent $event)
+            {
+                $event->types[] = DeprecWidget::class;
+            }
+        );
+    }
+
+
 }
+
